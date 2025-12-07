@@ -1,0 +1,60 @@
+FUNCTION_BLOCK LightingControl
+
+VAR_INPUT
+    ambient_light : REAL; // 0 - 100 lx
+    time_of_day : REAL;   // 0 - 24 godziny
+END_VAR
+
+VAR_OUTPUT
+    lamp_brightness : REAL; // 0 - 100 %
+END_VAR
+
+// input
+FUZZIFY ambient_light
+    TERM Dark := (0, 1) (0, 1) (20, 1) (40, 0); // bardzo ciemno do 20lx
+    TERM Medium := (30, 0) (50, 1) (70, 0);     // średnio
+    TERM Bright := (60, 0) (80, 1) (100, 1);    // jasno
+END_FUZZIFY
+
+// input
+FUZZIFY time_of_day
+    TERM Night_Early := (0, 1) (5, 1) (7, 0); // 00:00 - 06:00
+    TERM Morning := (5, 0) (8, 1) (11, 0);
+    TERM Day := (10, 0) (14, 1) (18, 0);
+    TERM Evening := (17, 0) (20, 1) (23, 0);
+    TERM Night_Late := (22, 0) (23, 1) (24, 1); // 22:00 - 24:00
+END_FUZZIFY
+
+// output
+DEFUZZIFY lamp_brightness
+    TERM Off := (0, 1) (10, 0);
+    TERM Low := (5, 0) (25, 1) (45, 0);
+    TERM Medium := (40, 0) (60, 1) (80, 0);
+    TERM High := (75, 0) (90, 1) (100, 1);
+
+    METHOD : COG; // Center of Gravity
+    DEFAULT := 0;
+END_DEFUZZIFY
+
+RULEBLOCK No1
+    AND : MIN;
+    ACT : MIN; // Metoda implikacji
+    ACCU : MAX; // Metoda sumowania
+
+    // jeśli jest jasno, gaś światło niezależnie od godziny
+    RULE 1 : IF ambient_light IS Bright THEN lamp_brightness IS Off;
+
+    // Ciemność
+    RULE 2 : IF ambient_light IS Dark AND time_of_day IS Night_Late THEN lamp_brightness IS High;
+    RULE 3 : IF ambient_light IS Dark AND time_of_day IS Night_Early THEN lamp_brightness IS Low;
+    RULE 4 : IF ambient_light IS Dark AND time_of_day IS Morning THEN lamp_brightness IS Medium;
+    RULE 5 : IF ambient_light IS Dark AND time_of_day IS Evening THEN lamp_brightness IS High;
+
+    // Średnia Ciemność
+    RULE 6 : IF ambient_light IS Medium AND time_of_day IS Day THEN lamp_brightness IS Off;
+    RULE 7 : IF ambient_light IS Medium AND time_of_day IS Evening THEN lamp_brightness IS Medium;
+    RULE 8 : IF ambient_light IS Medium AND time_of_day IS Morning THEN lamp_brightness IS Medium;
+
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK
