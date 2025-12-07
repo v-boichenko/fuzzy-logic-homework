@@ -11,13 +11,15 @@ END_VAR
 FUZZIFY temperature
     TERM cold := (0, 1) (10, 1) (20, 0);
     TERM comfortable := (10, 0) (25, 1) (40, 0);
-    TERM hot := (30, 0) (50, 1);
+    TERM hot := (30, 0) (50, 1) (80, 0);
+    TERM very_hot := (60, 0) (75, 1) (100, 1);
 END_FUZZIFY
 
 DEFUZZIFY fan_speed
     TERM low := (0, 1) (50, 0);
     TERM medium := (25, 0) (50, 1) (75, 0);
-    TERM high := (50, 0) (100, 1);
+    TERM high := (50, 0) (75, 1) (100, 0);
+    TERM maximum := (75, 0) (100, 1);
 	METHOD : COA;
     DEFAULT := 0;
 END_DEFUZZIFY
@@ -30,6 +32,7 @@ RULEBLOCK No1
     RULE 1 : IF temperature IS cold THEN fan_speed IS low;
     RULE 2 : IF temperature IS comfortable THEN fan_speed IS medium;
     RULE 3 : IF temperature IS hot THEN fan_speed IS high;
+    RULE 4 : IF temperature IS very_hot THEN fan_speed IS maximum;
 END_RULEBLOCK
 
 END_FUNCTION_BLOCK
