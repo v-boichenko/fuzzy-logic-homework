@@ -70,4 +70,24 @@ class LightControllerTest {
         assertEquals(60.0, actualBrightness, 5.0, "Bright day should turn off")
     }
 
+    @Test
+    fun `Case5 - Late night darkness triggers night mode`() {
+        val givenAmbientLight = 0.0 // lx Dark
+        val givenTimeOfDay = 3.0 // 03:00 AM
+        val actualBrightness = evaluateLighting(ambientLight = givenAmbientLight, timeOfDay = givenTimeOfDay)
+
+        // Should be Low for night time
+        assertEquals(25.0, actualBrightness, 5.0, "Darkness at night should result in Low brightness")
+    }
+
+    @Test
+    fun `Case6 - Early evening medium light supplements illumination`() {
+        val givenAmbientLight = 45.0 // lx Medium ambient
+        val givenTimeOfDay = 18.0 // 18:00
+        val actualBrightness = evaluateLighting(ambientLight = givenAmbientLight, timeOfDay = givenTimeOfDay)
+
+        // Should be roughly Medium (Supplementing the fading natural light)
+        assertEquals(60.0, actualBrightness, 10.0, "Medium light in early evening should trigger Medium brightness")
+    }
+
 }
