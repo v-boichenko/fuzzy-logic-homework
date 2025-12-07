@@ -41,7 +41,7 @@ RULEBLOCK No1
     ACT : MIN; // Metoda implikacji
     ACCU : MAX; // Metoda sumowania
 
-    // jeśli jest jasno, gaś światło niezależnie od godziny
+    // jeśli jasno, swiatlo jest wylączone
     RULE 1 : IF ambient_light IS Bright THEN lamp_brightness IS Off;
 
     // Ciemność
