@@ -31,7 +31,7 @@ DEFUZZIFY throttle
     TERM maintain := (-20, 0) (0, 1) (30, 0);
     TERM accelerate := (20, 0) (50, 1) (80, 0);
     TERM max_accelerate := (70, 0) (90, 1) (100, 1);
-    METHOD : COG;
+    METHOD : LM;
     DEFAULT := -25;
 END_DEFUZZIFY
 
