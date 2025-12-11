@@ -22,7 +22,6 @@ FUZZIFY distance
     TERM far := (120, 0) (170, 1) (200, 1);
 END_FUZZIFY
 
-
 DEFUZZIFY throttle
     TERM full_brake := (-100, 1) (-85, 1) (-70, 0);
     TERM medium_brake := (-85, 0) (-60, 1) (-35, 0);
@@ -32,3 +31,27 @@ DEFUZZIFY throttle
     METHOD : COG;
     DEFAULT := -25;
 END_DEFUZZIFY
+
+RULEBLOCK ACC_Rules
+    AND : MIN;
+    ACT : MIN;
+    ACCU : MAX;
+
+    // VERY_CLOSE - critical
+    RULE 1 : IF distance IS very_close AND speed IS slow THEN throttle IS full_brake;
+
+    // CLOSE - brake
+    RULE 2 : IF distance IS close AND speed IS slow THEN throttle IS medium_brake;
+    RULE 3 : IF distance IS close AND speed IS medium THEN throttle IS medium_brake;
+    RULE 4 : IF distance IS close AND speed IS fast THEN throttle IS full_brake;
+
+    // 3. MEDIUM - keep the distance
+    RULE 5 : IF distance IS safe AND speed IS slow THEN throttle IS accelerate;
+    RULE 6 : IF distance IS safe AND speed IS medium THEN throttle IS maintain;
+    RULE 7 : IF distance IS safe AND speed IS fast THEN throttle IS decelerate;
+
+    // 4. FAR - maintain high speed
+    RULE 8 : IF distance IS far AND speed IS slow THEN throttle IS max_accelerate;
+    RULE 9 : IF distance IS far AND speed IS medium THEN throttle IS accelerate;
+    RULE 10 : IF distance IS far AND speed IS fast THEN throttle IS maintain;
+END_RULEBLOCK
