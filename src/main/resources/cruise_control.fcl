@@ -1,0 +1,34 @@
+FUNCTION_BLOCK CruiseControl
+
+VAR_INPUT
+    speed : REAL;
+    distance : REAL;
+END_VAR
+
+VAR_OUTPUT
+    throttle : REAL;
+END_VAR
+
+FUZZIFY speed
+    TERM slow := (0, 1) (30, 1) (60, 0);
+    TERM medium := (40, 0) (70, 1) (100, 0);
+    TERM fast := (80, 0) (110, 1) (120, 1);
+END_FUZZIFY
+
+FUZZIFY distance
+    TERM very_close := (0, 1) (10, 1) (30, 0);
+    TERM close := (10, 0) (40, 1) (70, 0);
+    TERM safe := (50, 0) (100, 1) (150, 0);
+    TERM far := (120, 0) (170, 1) (200, 1);
+END_FUZZIFY
+
+
+DEFUZZIFY throttle
+    TERM full_brake := (-100, 1) (-85, 1) (-70, 0);
+    TERM medium_brake := (-85, 0) (-60, 1) (-35, 0);
+    TERM decelerate := (-50, 0) (-20, 1) (0, 0);
+    TERM maintain := (-20, 0) (0, 1) (20, 0);
+    TERM max_accelerate := (70, 0) (90, 1) (100, 1);
+    METHOD : COG;
+    DEFAULT := -25;
+END_DEFUZZIFY
