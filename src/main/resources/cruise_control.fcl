@@ -25,7 +25,7 @@ END_FUZZIFY
 
  // [-100%, 100%], -10m/s**2 - 10m/s**2
 DEFUZZIFY throttle
-    TERM full_brake := (-100, 1) (-85, 1) (-70, 0);
+    TERM full_brake := (-100, 1) (-70, 0);
     TERM medium_brake := (-85, 0) (-60, 1) (-35, 0);
     TERM decelerate := (-50, 0) (-20, 1) (0, 0);
     TERM maintain := (-20, 0) (0, 1) (30, 0);
