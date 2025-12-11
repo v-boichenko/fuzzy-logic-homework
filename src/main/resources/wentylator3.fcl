@@ -1,0 +1,35 @@
+FUNCTION_BLOCK FanControl
+
+VAR_INPUT
+    temperature : REAL;
+END_VAR
+
+VAR_OUTPUT
+    fan_speed : REAL;
+END_VAR
+
+FUZZIFY temperature
+    TERM cold := (0, 1) (10, 1) (20, 0);
+    TERM comfortable := (10, 0) (25, 1) (40, 0);
+    TERM hot := (30, 0) (50, 1) (80, 0);
+END_FUZZIFY
+
+DEFUZZIFY fan_speed
+    TERM low := (0, 1) (50, 0);
+    TERM medium := (25, 0) (50, 1) (75, 0);
+    TERM high := (50, 0) (100, 1);
+	METHOD : COA;
+    DEFAULT := 0;
+END_DEFUZZIFY
+
+RULEBLOCK No1
+    AND : MIN;
+    ACT : MIN;
+    ACCU : MAX;
+
+    RULE 1 : IF temperature IS cold THEN fan_speed IS low;
+    RULE 2 : IF temperature IS comfortable THEN fan_speed IS medium;
+    RULE 3 : IF temperature IS hot THEN fan_speed IS high;
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK
