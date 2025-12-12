@@ -17,8 +17,8 @@ FUZZIFY speed
 END_FUZZIFY
 
 FUZZIFY distance
-    TERM very_close := (0, 1) (10, 1) (30, 0);
-    TERM close := (10, 0) (40, 1) (70, 0);
+    TERM very_close := (0, 1) (2, 1) (3, 0);
+    TERM close := (2, 0) (40, 1) (70, 0);
     TERM safe := (50, 0) (100, 1) (150, 0);
     TERM far := (120, 0) (170, 1) (200, 1);
 END_FUZZIFY
